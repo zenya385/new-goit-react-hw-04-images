@@ -1,4 +1,5 @@
 import s from './ImageGalleryItem.module.css';
+import PropTypes from 'prop-types';
 
 function ImageGalleryItem({ imgS, imgXL, handleImageXL }) {
   return (
@@ -7,5 +8,11 @@ function ImageGalleryItem({ imgS, imgXL, handleImageXL }) {
     </li>
   );
 }
+
+ImageGalleryItem.propTypes = {
+  imgS: PropTypes.string.isRequired,
+  imgXL: PropTypes.string.isRequired,
+  handleImageXL: PropTypes.func.isRequired,
+};
 
 export default ImageGalleryItem;

@@ -1,12 +1,10 @@
 import { Component } from 'react/cjs/react.production.min';
-import axios from 'axios';
 import Button from './components/Button/Button';
 import ImageGallery from './components/ImageGallery/ImageGallery';
-import Loader from './components/Loader/Loader';
 import Modal from './components/Modal/Modal';
 import Searchbar from './components/Searchbar/Searchbar';
-
-// https://pixabay.com/api/?q=${query}&page=${page}&key=22610819-610095abdb962b7788008b666&image_type=photo&orientation=horizontal&per_page=12
+import { getImg } from 'services/Api';
+import Loader from 'components/Loader/Loader';
 
 class App extends Component {
   state = {
@@ -15,25 +13,35 @@ class App extends Component {
     searchImgs: [],
     imgXL: '',
     showModal: false,
-    isLOading: false,
+    isLoading: false,
+    error: null,
   };
+
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.q !== this.state.q) {
-      axios
-        .get(
-          `https://pixabay.com/api/?key=23313503-fe93316d6899b77e3854f09dc&q=${this.state.q}&image_type=photo&per_page=12&orientation&page=page=${this.state.page}`
+    if (prevState.q !== this.state.q || prevState.page !== this.state.page) {
+      this.setState({ isLoading: true });
+      getImg(this.state.q, this.state.page)
+        .then(searchImgs =>
+          this.setState(prev => ({
+            searchImgs: [...prev.searchImgs, ...searchImgs],
+          }))
         )
-        .then(res => this.setState({ searchImgs: res.data.hits }))
-        .catch(err => console.log(err));
+        .catch(error => this.setState({ error: error.message }))
+        .finally(() => this.setState({ isLoading: false }));
     }
   }
+  handleClickLoadMore = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+  };
 
   toggleModal = () => {
     this.setState(({ showModal }) => ({ showModal: !showModal }));
   };
 
   handleSearchFormSubmit = searchInput => {
-    this.setState({ q: searchInput });
+    this.setState({ q: searchInput, page: 1, searchImgs: [] });
   };
 
   handleImageXL = imgXL => {
@@ -41,19 +49,23 @@ class App extends Component {
     this.toggleModal();
   };
   render() {
-    const { showModal, searchImgs, imgXL } = this.state;
+    const { showModal, searchImgs, imgXL, isLoading, error } = this.state;
     return (
       <div>
         <Searchbar onSubmit={this.handleSearchFormSubmit} />
+        {error && searchImgs.length === 0 && (
+          <p style={{ fontSize: '50px', color: 'red' }}>{error}</p>
+        )}
         <ImageGallery
           searchImgs={searchImgs}
           handleImageXL={this.handleImageXL}
         />
-        <Loader />
-        <Button />
-        {/* <button type="button" onClick={this.togleModal}>
-          открыть модалку
-        </button> */}
+        {isLoading && <Loader />}
+
+        {searchImgs.length > 0 && (
+          <Button handleClickLoadMore={this.handleClickLoadMore} />
+        )}
+
         {showModal && <Modal onClose={this.toggleModal} imgXL={imgXL} />}
       </div>
     );

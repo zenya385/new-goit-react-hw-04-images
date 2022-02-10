@@ -1,16 +1,11 @@
-import React, { Component } from 'react';
+import { TailSpin } from 'react-loader-spinner';
 
-class Loader extends Component {
-  state = {};
-  render() {
-    return (
-      <div className="overlay">
-        <div className="modal">
-          <img src="" alt="" />
-        </div>
-      </div>
-    );
-  }
+function Loader() {
+  return (
+    <div>
+      <TailSpin color="#00BFFF" height={80} width={80} />;
+    </div>
+  );
 }
 
 export default Loader;

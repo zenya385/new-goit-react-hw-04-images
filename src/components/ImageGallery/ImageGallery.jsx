@@ -1,6 +1,6 @@
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import s from './ImageGallery.module.css';
-
+import PropTypes from 'prop-types';
 function ImageGallery({ searchImgs, handleImageXL }) {
   return (
     <ul className={s.ImageGallery}>
@@ -16,4 +16,8 @@ function ImageGallery({ searchImgs, handleImageXL }) {
   );
 }
 
+ImageGalleryItem.propTypes = {
+  searchImgs: PropTypes.array,
+  handleImageXL: PropTypes.func.isRequired,
+};
 export default ImageGallery;
