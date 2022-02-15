@@ -17,14 +17,12 @@ export default function App() {
 
   useEffect(() => {
     if (q === '') return;
-    getImg();
-  }, [q, page]);
 
-  // getImg(q, page).then(searchImgs =>
-  //   setSearchImgs(prev => [...prev, ...searchImgs])
-  //     .catch(error => setError(error.message))
-  //     .finally(() => setIsLoading(false))
-  // );
+    getImg(q, page)
+      .then(searchImgs => setSearchImgs(prev => [...prev, ...searchImgs]))
+      .catch(error => setError(error.message))
+      .finally(() => setIsLoading(false));
+  }, [q, page]);
 
   const handleClickLoadMore = () => {
     setPage(page => page + 1);
